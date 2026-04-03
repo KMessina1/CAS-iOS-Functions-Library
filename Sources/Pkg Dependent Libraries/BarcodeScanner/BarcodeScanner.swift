@@ -6,12 +6,12 @@ Modified:
  
 ©2024-2026 Creative App Solutions, LLC. - All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------
-NOTES:
+NOTES:  //External Package: https://github.com/twostraws/CodeScanner
 --------------------------------------------------------------------------------------------------------------------------*/
 
 import SwiftUI
 import AVFoundation
-import CodeScanner //External Package: github.com/twostraws/CodeScanner.git
+import CodeScanner
 
 public struct BarcodeScanner {
     public enum scannerStatusType: Int, CaseIterable, Identifiable {
@@ -22,9 +22,9 @@ public struct BarcodeScanner {
         case error
         case unsupportedFormat
         
-        var id: Int { self.rawValue }
+        public var id: Int { self.rawValue }
         
-        var name: String {
+        public var name: String {
             switch self {
                 case .none: return "None"
                 case .cancelled: return "Cancelled"
@@ -44,9 +44,9 @@ public struct BarcodeScanner {
         case found_AmmoCatalog
         case notFound_AmmoCatalog
         
-        var id: Int { self.rawValue }
+        public var id: Int { self.rawValue }
         
-        var name: String {
+        public var name: String {
             switch self {
                 case .none: return "None"
                 case .cancelled: return "Cancelled"
@@ -83,7 +83,7 @@ public struct BarcodeScanner {
         @Binding var scannedCode: String
         @Binding var scannedResult: scannerStatusType
 
-        var body: some View {
+        public var body: some View {
             ZStack {
                 CodeScannerView(
                     codeTypes:[.upce,.ean13], //UPC-e (UPCE), UPC-a (EAN-13)

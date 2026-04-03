@@ -14,7 +14,6 @@ NOTES: REQUIRES ext_Strings library OR uncomment the string commands.
 import Foundation
 import SwiftUI
  
- Uncomment if ext_string library is used.
 extension String {
     func height(constraintedWidth width: CGFloat, font: UIFont) -> CGFloat {
         let label =  UILabel(frame: CGRect(x: 0, y: 0, width: width, height: .greatestFiniteMagnitude))

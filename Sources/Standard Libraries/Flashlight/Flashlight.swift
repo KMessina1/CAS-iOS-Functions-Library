@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------------------------------------------------------------
-    File: BarcodeScanner.swift
+    File: Flashlight.swift
   Author: Kevin Messina
  Created: 8/13/24
 Modified:

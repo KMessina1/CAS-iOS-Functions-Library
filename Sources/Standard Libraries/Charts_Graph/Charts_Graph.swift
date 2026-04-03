@@ -15,8 +15,8 @@ import VisionKit
 
 public struct DocScanView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(CurrentTheme.self) var CT
-    
+    @Environment(CurrentTheme.self) var CT: CurrentTheme?
+
     enum TableTypes { case inventory, provenance }
     
     //Scanner Params

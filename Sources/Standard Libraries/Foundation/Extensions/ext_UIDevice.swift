@@ -38,17 +38,17 @@ public extension UIDevice {
         return remainingFreeSpaceInGB() / 1024
     }
 
-    static let isZoomed = UIScreen().isZoomed
+    static var isZoomed: Bool { UIScreen().isZoomed }
     
     struct Family {
         // environment Mode
-        static let isPreview = Bool(ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1")
+        static var isPreview: Bool { Bool(ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1") }
 #if targetEnvironment(simulator)
         static let isSim = Bool(ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1") ?false :true
 #else
         static let isSim = false
 #endif
-        static let isPrevOrSim = (isPreview || isSim)
+        static var isPrevOrSim: Bool { (isPreview || isSim) }
 
         func environmentIs() -> String {
             if UIDevice.Family.isPreview {
@@ -62,12 +62,12 @@ public extension UIDevice {
 //        static let isSim = Bool(TARGET_IPHONE_SIMULATOR == 1)
         
         // device Mode
-        static let isPad = (UIDevice.current.userInterfaceIdiom == .pad)
-        static let isPhone = (UIDevice.current.userInterfaceIdiom == .phone)
-        static let isMac = (UIDevice.current.userInterfaceIdiom == .mac)
-        static let isTV = (UIDevice.current.userInterfaceIdiom == .tv)
-        static let isCar = (UIDevice.current.userInterfaceIdiom == .carPlay)
-        static let isVision = (UIDevice.current.userInterfaceIdiom == .vision)
+        static var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+        static var isPhone: Bool { UIDevice.current.userInterfaceIdiom == .phone }
+        static var isMac: Bool { UIDevice.current.userInterfaceIdiom == .mac }
+        static var isTV: Bool { UIDevice.current.userInterfaceIdiom == .tv }
+        static var isCar: Bool { UIDevice.current.userInterfaceIdiom == .carPlay }
+        static var isVision: Bool { UIDevice.current.userInterfaceIdiom == .vision }
         
         func typeIs() -> String {
             switch UIDevice.current.userInterfaceIdiom {

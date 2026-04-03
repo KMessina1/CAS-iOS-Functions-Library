@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/techprimate/TPPDF", from: "2.6.1"),
         .package(url: "https://github.com/groue/GRDB.swift", from: "6.0.0"),
-        .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.2")
+        .package(url: "https://github.com/twostraws/CodeScanner", from: "2.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -35,6 +35,7 @@ let package = Package(
     ],
     swiftLanguageModes: [.v6]
 )
+
 
 
 
