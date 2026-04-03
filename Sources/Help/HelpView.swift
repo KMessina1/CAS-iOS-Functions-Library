@@ -4,7 +4,7 @@
  Created: 6/10/24
 Modified:
  
-©2024 Creative App Solutions, LLC. - All Rights Reserved.
+©2024-2026 Creative App Solutions, LLC. - All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------
 NOTES:
 --------------------------------------------------------------------------------------------------------------------------*/
@@ -13,68 +13,140 @@ import SwiftUI
 
 struct HelpView: View {
     @Environment(\.dismiss) private var dismiss
-    //Theme
-    @Environment(CurrentTheme.self) var currentTheme: CurrentTheme
-    
-    var hideDoneButton: Bool
+    let CT = CurrentTheme().getThemeFromUserStds()
     
     // Records
     @State var helpItems:[HelpItem] = []
     @State var headerItems:[HelpItem] = []
     @State var bodyItems:[HelpItem] = []
     @State var footerItems:[HelpItem] = []
+    @State var sections:[String] = []
 
+    @State private var scrollTarget: String = ""
     @State private var textSize: CGFloat = 18.0
-    
+    @State private var isShowingPopover = false
+
     var body: some View {
-        let colorsForMode = currentTheme.colorsForMode()
-        
         ZStack {
-            currentTheme.info.backgroundColors.first
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    CT.Colors.backgroundArr[0],
+                    CT.Colors.backgroundArr[0],
+                    .black
+                ]),
+                startPoint: .top,endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             //titleView
             VStack {
-                titleView
-                
-                .padding()
-                
-                Divider().frame(height:1.5).overlay(colorsForMode.light)
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing:textSize) {
-                        headerView
-                        
-                        bodyView
-                        
-                        footerView
-                    }//End VStack
-                    .padding(.horizontal,10)
-                }//End ScrollView
+                ScrollViewReader { SR in
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing:textSize) {
+                            headerView
 
-                Divider().frame(height:1.5).overlay(colorsForMode.light)
-                
-                sliderView
+                            bodyView
+
+                            footerView
+                                .padding(.top,-30)
+                        }//End VStack
+                        .padding(.horizontal,10)
+                    }//End ScrollView
+                    .onChange(of: scrollTarget) {
+                        withAnimation {
+                            SR.scrollTo(scrollTarget,anchor: .top)
+                        }
+                    }
+                }//End Scrollview Reader
             }//End ZStack
             .padding(.horizontal,10)
             .zIndex(1)
         }//End Body
-        .onAppear(perform: {
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("App Help".uppercased())
+                    .foregroundStyle(CT.lightest)
+            }
+            
+            ToolbarItem(placement: .subtitle) {
+                Text("v\(AppInfo.version)")
+                    .fontWeight(.light)
+                    .italic()
+                    .foregroundStyle(CT.lightest)
+            }
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button(action: {
+                    isShowingPopover = true
+                }) {
+                    Image(systemName: "textformat.size")
+                        .foregroundStyle(CT.accent)
+                }
+                .popover(isPresented: $isShowingPopover) {
+                    sharedPopovers.textSize(textSize: $textSize)
+                        .presentationCompactAdaptation(.popover) // Optional: Force popover on compact sizes
+                }
+                .onChange(of: textSize) {
+                    UserDefaults.standard.set(textSize, forKey: KeyNames.App.Settings.helpTextSize)
+                    UserDefaults.standard.synchronize()
+                }
+
+                Menu {
+                    Text("Jump To Subject")
+                    
+                    Button {
+                        scrollTarget = "Header"
+                    } label: {
+                        Label("Top", systemImage: AppImages.arrow_Up)
+                    }
+                    
+                    ForEach(sections, id: \.self) { section in
+                        Button {
+                            scrollTarget = "\( section )"
+                        } label: {
+                            Label("\( section )", systemImage: "arrow.turn.down.right")
+                        }
+                    }
+                    
+                    Button {
+                        scrollTarget = "Footer"
+                    } label: {
+                        Label("Bottom", systemImage: AppImages.arrow_Down)
+                    }
+                } label: {
+                    Label("", systemImage: AppImages.menu)
+                }//End Menu
+            }
+        }
+        .onAppear {
             textSize = UserDefaults.standard.double(forKey: KeyNames.App.Settings.helpTextSize)
             
             loadBasicData()
-        })
+        }
     }
     
     func loadBasicData() -> Void {
+        helpItems.removeAll()
+        headerItems.removeAll()
+        bodyItems.removeAll()
+        footerItems.removeAll()
+        sections.removeAll()
+
         do {
-            try dbQueue.read { db in
-                helpItems = try HelpItem.fetchAll(db)
+            try dbQueue_Help.read { dbTable in
+                helpItems = try HelpItem.fetchAll(dbTable)
                 
                 //filter sections
-                headerItems = helpItems.filter({ $0.section == "Header"  })
-                bodyItems = helpItems.filter({ $0.section == "Body"  })
-                footerItems = helpItems.filter({ $0.section == "Footer"  })
+                headerItems = helpItems.filter({ $0.section == "Header" })
+                bodyItems = helpItems.filter({ $0.section == "Body" }).sorted(by: { $0.title < $1.title })
+                footerItems = helpItems.filter({ $0.section == "Footer" })
+                
+                //filter section titles
+                for item in bodyItems {
+                   if !sections.contains(item.title) {
+                       sections.append(item.title)
+                   }
+                }
             }
         } catch {
             print("\(error)")
@@ -83,84 +155,22 @@ struct HelpView: View {
 }
 
 #Preview {
-    let currentTheme = CurrentTheme()
-    currentTheme.info = Theme.Names.arr[Theme.Names.basic.id]
-    //    currentTheme.info = Theme.Names.arr[Theme.Names.dark.id]
-    //    currentTheme.info = Theme.Names.arr[Theme.Names.light.id]
-    //    currentTheme.info = Theme.Names.arr[Theme.Names.midnight.id]
-    //    currentTheme.info = Theme.Names.arr[Theme.Names.military.id]
-
-    return HelpView(hideDoneButton: true)
-        .environment(currentTheme)
+    HelpView()
 }
 
 // MARK: - *** Extension ***
 extension HelpView {
-    var sliderView: some View {
-        HStack{
-            Label("size: \( Int(textSize) )", systemImage: "textformat.size")
-                .padding(.trailing,40)
-
-            Spacer()
-
-            Slider(value: $textSize, in: 10...36, step: 1) {
-                
-            } minimumValueLabel: {
-                Image(systemName: "textformat.size.smaller")
-            } maximumValueLabel: {
-                Image(systemName: "textformat.size.larger")
-            }
-        }
-        .padding(.horizontal,20)
-        .onChange(of: textSize) {
-            UserDefaults.standard.set(textSize, forKey: KeyNames.App.Settings.helpTextSize)
-            UserDefaults.standard.synchronize()
-        }
-    }
-    
-    var titleView: some View {
-        let colorsForMode = currentTheme.colorsForMode()
-        
-        return HStack(alignment: .center) {
-            VStack(alignment: hideDoneButton ?.center :.leading, spacing:0){
-                Text("App Help")
-                    .font(.largeTitle)
-                    .fontWeight(.light)
-                    .minimumScaleFactor(0.75)
-                    .foregroundStyle(currentTheme.info.titleColor)
-                
-                Text("Version \( AppInfo.version ) (\( AppInfo.build ))")
-                    .font(.title3)
-                    .fontWeight(.light)
-                    .minimumScaleFactor(0.75)
-                    .foregroundStyle(colorsForMode.medium)
-            }//End VStack
-            
-            if !hideDoneButton {
-                Spacer()
-                
-                Button(action: {
-                    withAnimation { dismiss() }
-                }, label: {
-                    Image(systemName: "xmark.circle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(CGSize(width: 35, height: 35))
-                        .foregroundStyle(colorsForMode.dark)
-                })
-            }//End If
-        }//End HStack
-        .padding(.horizontal,10)
-        .font(.body)
-    }
-    
     var headerView: some View {
         VStack {
             ForEach(headerItems, id: \.id) { item in
                 VStack {
                     Text(item.subTitle).font(.system(size: textSize, weight: .regular))
+                        .id("Header")
+                        .foregroundStyle(CT.title)
                     Text(item.detail).font(.system(size: textSize + 10, weight: .semibold))
-                    Text(item.notes).font(.system(size: textSize - 2, weight: .light)).italic()
+                        .foregroundStyle(CT.fair)
+                    Text(item.notes).font(.system(size: textSize - 3, weight: .light)).italic()
+                        .foregroundStyle(CT.medium)
                 }
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
@@ -171,7 +181,7 @@ extension HelpView {
     
     var regularDivider: some View {
         HStack {
-            Rectangle().fill(currentTheme.info.accentColor)
+            Rectangle().fill(CT.accent)
                 .frame(height: 1.5)
         }
         .frame(height: 25)
@@ -181,15 +191,16 @@ extension HelpView {
     
     var fancyDivider: some View {
         HStack {
-            Rectangle().fill(currentTheme.info.accentColor)
+            Rectangle().fill(CT.accent)
                 .frame(height: 1.5)
             
             Image(systemName: "fleuron")
                 .resizable()
                 .imageScale(.small)
                 .scaledToFit()
+                .foregroundStyle(CT.fair)
             
-            Rectangle().fill(currentTheme.info.accentColor)
+            Rectangle().fill(CT.accent)
                 .frame(height: 1.5)
         }
         .frame(height: 25)
@@ -198,23 +209,30 @@ extension HelpView {
 
     var bodyView: some View {
         VStack(alignment: .leading, spacing:0) {
-            ForEach(bodyItems, id: \.id) { section in
+            ForEach(sections, id: \.self) { sectionTitle in
                 Section(header:
                     HStack {
-                        Text(section.title).font(.system(size: textSize + 10, weight: .medium))
+                        Text(sectionTitle)
+                        .font(.system(size: textSize + 10, weight: .medium))
+                        .foregroundStyle(CT.title)
+                        .id(sectionTitle)
                         Spacer()
                     }
                 ) {
-                    let sectionItems = bodyItems.filter({ $0.title == section.title  })
-                    
+                    let sectionItems = bodyItems.filter({ $0.title == sectionTitle  })
+
                     ForEach(sectionItems, id: \.id) { item in
                         VStack(alignment: .leading) {
                             Text(item.subTitle).font(.system(size: textSize + 7, weight: .regular))
-                            Text(item.detail).font(.system(size: textSize, weight: .thin))
+                                .foregroundStyle(CT.light)
+                            Text(item.detail).font(.system(size: textSize, weight: .regular))
+                                .foregroundStyle(CT.lightest)
                             if !item.notes.isEmpty {
-                                Text("Notes: ").font(.system(size: textSize - 2, weight: .bold))
+                                Text("Notes: ").font(.system(size: textSize - 3, weight: .medium))
+                                    .foregroundStyle(CT.title)
                                     .padding(.top,8)
-                                Text(item.notes).font(.system(size: textSize - 2, weight: .thin)).italic()
+                                Text(item.notes).font(.system(size: textSize - 3, weight: .regular)).italic()
+                                    .foregroundStyle(CT.fair)
                             }
                             
                             if sectionItems.last!.subTitle == item.subTitle {
@@ -227,6 +245,8 @@ extension HelpView {
                 }//End Section
             }//End ForEach
         }//End VStack
+        .foregroundStyle(CT.lightest)
+        .padding(.vertical,20)
     }
     
     var footerView: some View {
@@ -234,14 +254,16 @@ extension HelpView {
             ForEach(footerItems, id: \.id) { item in
                 VStack(alignment: .leading, spacing:textSize) {
                     Text(item.subTitle)
+                        .id("Footer")
                     Text(item.detail)
                     //MARK: - 📝TODO: ⚠️(Warning) Change to actual webssite for production.
                     Text("Visit our website: [click here](https://ballistictracker.godaddysites.com)")
-                        .tint(currentTheme.isLight ?.indigo :.cyan)
+                        .tint(CT.isLight ?.indigo :.cyan)
                 }
             }
         }//End VStack
         .font(.system(size: textSize, weight: .regular))
+        .foregroundStyle(CT.lightest)
         .padding(.vertical,20)
     }
 }

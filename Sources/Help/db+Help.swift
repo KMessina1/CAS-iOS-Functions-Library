@@ -4,7 +4,7 @@
  Created: 6/9/24
  Modified:
  
- ©2024 Creative App Solutions, LLC. - All Rights Reserved.
+ ©2024-2026 Creative App Solutions, LLC. - All Rights Reserved.
  ----------------------------------------------------------------------------------------------------------------------------
  NOTES:
  --------------------------------------------------------------------------------------------------------------------------*/
@@ -14,11 +14,11 @@ import GRDB
 
 ///Usage:
 ///do {
-///    try dbQueue.read { db in
-///        let all = try Help.fetchAll(db)
-///        let oneDraft = try Help.fetchOne(db)
-///        let tenDrafts = try Help.limit(10).fetchAll(db)
-///        let draftsCount = try Help.fetchCount(db)
+///    try db.Queue().Queue_Help.read { dbTable in
+///        let all = try Help.fetchAll(dbTable)
+///        let oneDraft = try Help.fetchOne(dbTable)
+///        let tenDrafts = try Help.limit(10).fetchAll(dbTable)
+///        let draftsCount = try Help.fetchCount(dbTable)
 ///    }
 ///} catch {
 ///    print("\(error)")
@@ -26,6 +26,7 @@ import GRDB
 struct HelpItem: Codable, Equatable, FetchableRecord, MutablePersistableRecord {
     var id: Int64?
     var section: String
+    var sortOrder: Int
     var title: String
     var subTitle: String
     var detail: String
@@ -33,9 +34,10 @@ struct HelpItem: Codable, Equatable, FetchableRecord, MutablePersistableRecord {
 
     static let databaseTableName: String = "Help"
     
-    private enum Columns {
+    internal enum Columns {
         static let id = Column(CodingKeys.id)
         static let section = Column(CodingKeys.section)
+        static let sortOder = Column(CodingKeys.sortOrder)
         static let title = Column(CodingKeys.title)
         static let subTitle = Column(CodingKeys.subTitle)
         static let detail = Column(CodingKeys.detail)

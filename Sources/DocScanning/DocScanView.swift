@@ -29,7 +29,7 @@ import VisionKit
 ///                 docTypes: .images,
 ///                 saveIn: .provenanceDir
 ///             )
-public struct DocScanView: View {
+struct DocScanView: View {
     @Environment(\.dismiss) var dismiss
     let CT = CurrentTheme().getThemeFromUserStds()
     

@@ -4,10 +4,11 @@
   Created: Apr 18, 2020
  Modified: Aug 23. 2024
  
- ©2020-2024 Creative App Solutions, LLC. - All Rights Reserved.
+ ©2020-2026 Creative App Solutions, LLC. - All Rights Reserved.
  ----------------------------------------------------------------------------------------------------------------------------
  NOTES:
  
+ 2025_04_13 - Updated SimPrint structure.
  2024_08_23 - Converted Structs to enum's.
  --------------------------------------------------------------------------------------------------------------------------*/
 
@@ -19,14 +20,15 @@ import SwiftUI
 ///
 /// Usage: .font(Font.custom(FontName.AcademyEngravedLET.regular.rawValue, size: 24))
 ///
-public struct FontName: RawRepresentable {
+struct FontName: RawRepresentable {
     var rawValue: String
     
     func printAllNamesToConsole() {
         for family: String in UIFont.familyNames {
             simPrint("\(family)", action: .info, log: LFFL())
+            
             for names: String in UIFont.fontNames(forFamilyName: family) {
-                simPrint("├─➤ \(names)", action: .info, log: LFFL())
+                simPrint("\(names)", action: .detail_1, log: LFFL())
             }
         }
     }
