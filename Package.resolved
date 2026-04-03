@@ -1,0 +1,15 @@
+{
+  "originHash" : "b32bd813429d59429085e305c67bd837e574f9ce687463bac53963f2cbb62276",
+  "pins" : [
+    {
+      "identity" : "tppdf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/techprimate/TPPDF",
+      "state" : {
+        "revision" : "975049c0e1022922580b7927e030901604024925",
+        "version" : "2.6.1"
+      }
+    }
+  ],
+  "version" : 3
+}
