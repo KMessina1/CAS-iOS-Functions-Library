@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WhatsNew</key>
+	<array>
+		<dict>
+			<key>title</key>
+			<string>Swift &amp; SwiftUI</string>
+			<key>detail</key>
+			<string>Completely rewrtten in Apple&apos;s latest Swift and SwiftUI progrmaming languages for superior prformance. </string>
+			<key>icon</key>
+			<string>WN_Swift</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>iOS 17+ Compatibility</string>
+			<key>detail</key>
+			<string>Devices running iOS 13+ will get the full benefits of SwiftUI and its improved performance. </string>
+			<key>icon</key>
+			<string>WN_ios17</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>Enhanced Privacy</string>
+			<key>detail</key>
+			<string>App is completely compliant with Apples guidelines for mainting user privacy. </string>
+			<key>icon</key>
+			<string>WN_Privacy</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>Some other stuff...</string>
+			<key>detail</key>
+			<string>Various changes and fixes that make the user experience better.</string>
+			<key>icon</key>
+			<string>WN_Tools</string>
+		</dict>
+	</array>
+</dict>
+</plist>
