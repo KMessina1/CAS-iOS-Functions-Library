@@ -1,6 +1,24 @@
 {
-  "originHash" : "b32bd813429d59429085e305c67bd837e574f9ce687463bac53963f2cbb62276",
+  "originHash" : "05b30e75edf60b109b80fa82c29d598c10ad83f199f3a5072571922aefa0f1eb",
   "pins" : [
+    {
+      "identity" : "codescanner",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twostraws/CodeScanner",
+      "state" : {
+        "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
+        "version" : "2.5.2"
+      }
+    },
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift",
+      "state" : {
+        "revision" : "2cf6c756e1e5ef6901ebae16576a7e4e4b834622",
+        "version" : "6.29.3"
+      }
+    },
     {
       "identity" : "tppdf",
       "kind" : "remoteSourceControl",
